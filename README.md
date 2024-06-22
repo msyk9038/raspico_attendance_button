@@ -1,1 +1,5 @@
-# raspico_attendance_button
+# raspberry pi pico wを使ってchatGPTでメッセージを生成しslackに投稿するボタンを作る
+
+https://qiita.com/38tam/private/4c6573631f57e5930470
+
+<img src="[http://i.imgur.com/Jjwsc.jpg](https://camo.qiitausercontent.com/e8f151a26658a252a452596a166f554d31f0b278/68747470733a2f2f71696974612d696d6167652d73746f72652e73332e61702d6e6f727468656173742d312e616d617a6f6e6177732e636f6d2f302f333738393031312f65636566626531322d303861312d623433362d343162662d3436643132303766396137622e706e67)" alt="出退勤宣言ボタン" title="出退勤宣言ボタン">
