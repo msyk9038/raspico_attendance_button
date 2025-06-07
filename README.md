@@ -1,120 +1,40 @@
-# Raspberry Pi Pico を使った出退勤通知システム
+# 出席ボタン
 
-このプロジェクトは、Raspberry Pi Pico W を使用して作成した出退勤通知システムです。ボタン操作でSlackに出勤・退勤メッセージを自動投稿します。
+Raspberry Pi Pico W でボタン押すだけで Slack に出退勤通知。ChatGPT がローラ風メッセージ生成します。
 
-## 概要
-
-オフィスや在宅勤務時に、出勤・退勤のタイミングでボタンを押すだけでSlackに通知メッセージを送信するシステムです。ChatGPTを使って自動生成されたメッセージがSlackに投稿され、OLEDディスプレイにも表示されます。Raspberry Pi Pico Wの無線LAN機能を活用し、シンプルで使いやすい勤怠通知システムを実現しています。
-
-## 機能
-
-- 出勤・退勤ボタンによるSlackへの通知
-- ChatGPTによるメッセージの自動生成（「ローラ風」の文体に変換）
-- OLEDディスプレイによる状態表示
-- LEDによる出勤・退勤状態の視覚的表示
-- Wi-Fi接続によるオンライン通知
-- NTPによる正確な時刻取得
-
-## ハードウェア要件
+## ハードウェア
 
 - Raspberry Pi Pico W
-- プッシュボタン 2個（出勤用・退勤用）
-- LED 2個（出勤状態・退勤状態表示用）
-- OLEDディスプレイ（SSD1306, I2C接続）
-- 電源（USB電源またはバッテリー）
-- ブレッドボードとジャンパーワイヤー
+- ボタン 2個、LED 2個
+- OLED ディスプレイ (SSD1306)
 
-## 配線図
+## 配線
 
 ```
-Raspberry Pi Pico W    コンポーネント
----------------------------------
-GP0  ---------------  退勤ボタン（PULL_UP）
-GP2  ---------------  出勤ボタン（PULL_UP）
-GP14 ---------------  退勤状態LED
-GP15 ---------------  出勤状態LED
-GP16 ---------------  OLEDディスプレイ SDA（I2C）
-GP17 ---------------  OLEDディスプレイ SCL（I2C）
-VSYS --------------  電源
-GND  --------------  共通GND
+GP0: 退勤ボタン   GP14: 退勤LED
+GP2: 出勤ボタン   GP15: 出勤LED
+GP16/17: OLED (SDA/SCL)
 ```
 
-## ソフトウェアのセットアップ
+## セットアップ
 
-1. MicroPythonをRaspberry Pi Pico Wにインストール
-2. 以下のファイルをPicoに転送:
-   - main.py: メインプログラム
-   - wifi.py: Wi-Fi接続用
-   - slack.py: Slack API通信用
-   - chatgpt.py: OpenAI API通信用
-   - oled.py: OLEDディスプレイ制御用
-   - ssd1306.py: OLEDドライバ
-   - getJSTstr.py: 日本時間取得用
-   - misakifont/: 日本語フォント表示用
-   - private.py: 認証情報（template_private.pyをコピーして作成）
+1. MicroPython インストール
+2. 全ファイルを Pico に転送
+3. `template_private.py` → `private.py` にリネームして設定:
 
-3. `private.py` ファイルを作成し、以下の情報を設定:
 ```python
-# wifi
-ssid = "あなたのWi-Fi SSID"
-password = "あなたのWi-Fiパスワード"
+# Wi-Fi
+ssid = "your-wifi"
+password = "your-password"
 
-# slack
-token = "SlackのAPIトークン"
-channel_id = "投稿先のSlackチャンネルID"
+# Slack
+token = "xoxb-your-token"
+channel_id = "your-channel-id"
 
-# openai
-openai_api_key = "OpenAI APIキー"
+# OpenAI
+openai_api_key = "your-api-key"
 ```
 
-## 使用方法
+## 使い方
 
-### 基本的な操作
-1. システムの電源を入れる
-2. Wi-Fiに接続すると内蔵LEDが点灯
-3. OLEDに「Ready?」と表示されたら準備完了
-4. 出勤時: 出勤ボタン（GP2）を押す
-   - ChatGPTが「ローラ風」の出勤メッセージを生成
-   - 生成されたメッセージがSlackに投稿される
-   - 出勤状態LEDが点灯
-5. 退勤時: 退勤ボタン（GP0）を押す
-   - ChatGPTが「ローラ風」の退勤メッセージを生成
-   - 生成されたメッセージがSlackに投稿される
-   - 退勤状態LEDが点灯
-
-### メッセージ生成
-- 出勤時: 「おはようございます、月島勤務開始します。」をベースにChatGPTが「ローラ風」に変換
-- 退勤時: 「お疲れ様でした、月島勤務終了します。」をベースにChatGPTが「ローラ風」に変換
-- メッセージはOLEDディスプレイにも表示
-- 投稿後、10秒後に投稿時刻が表示される
-
-## カスタマイズ
-
-- `main.py` の `post_to_slack` 関数内でメッセージのベーステキストを変更可能
-- ChatGPTへのプロンプトを変更することで、異なるスタイルのメッセージを生成可能（現在は「ローラ風」）
-- LEDの接続ピンや動作を変更可能
-- OLEDの表示内容やフォントサイズを調整可能
-
-## トラブルシューティング
-
-- Wi-Fiに接続できない場合: `private.py` のSSIDとパスワードを確認
-- Slackに投稿できない場合: トークンとチャンネルIDを確認
-- ChatGPTが応答しない場合: APIキーの有効性と利用制限を確認
-- OLEDが表示しない場合: I2C接続とアドレス設定を確認
-- ボタンが反応しない場合: 配線とプルアップ設定を確認
-
-## 発展アイデア
-
-- 勤務時間の自動計算と表示
-- 複数ユーザーの対応（RFIDカードなどで識別）
-- 勤怠データのローカル保存と集計
-- Webインターフェースでの管理機能
-- 異なる文体スタイルの選択機能
-
-## ライセンス
-
-MIT
-
-## 作者
-
-msyk9038
+電源入れて「Ready?」が表示されたらボタン押すだけ。ChatGPT がメッセージ生成して Slack に投稿します。
