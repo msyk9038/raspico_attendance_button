@@ -20,20 +20,21 @@ GP16/17: OLED (SDA/SCL)
 
 1. MicroPython インストール
 2. 全ファイルを Pico に転送
-3. `template_private.py` → `private.py` にリネームして設定:
+3. 設定ファイル作成:
 
-```python
-# Wi-Fi
-ssid = "your-wifi"
-password = "your-password"
-
-# Slack
-token = "xoxb-your-token"
-channel_id = "your-channel-id"
-
-# OpenAI
-openai_api_key = "your-api-key"
+**方法1: .env ファイル使用（推奨）**
+```bash
+cp .env.example .env
+# .env ファイルを編集して実際の値を設定
 ```
+
+**方法2: private.py ファイル使用**
+```bash
+cp template_private.py private.py
+# private.py ファイルを編集して実際の値を設定
+```
+
+⚠️ **重要**: 実際の API キーやトークンは絶対にコミットしないでください
 
 ## 使い方
 
